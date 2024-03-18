@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RitualServer.Model;
+using System.Text.Json.Serialization;
+using System.Text.Json;
+
 namespace RitualServer.Controllers
 {
     [Route("api/[controller]")]
@@ -16,7 +19,10 @@ namespace RitualServer.Controllers
         [Route("/getArticle")]
         public async Task<ActionResult<IEnumerable<User>>> Get()
         {
-            return await _ritualbdContext.Users.ToListAsync();
+           // var abc= await _ritualbdContext.Users.Include(u => u.Roles).ToListAsync();
+           var users=await _ritualbdContext.Users.Include(u=>u.Roles).ToListAsync();
+            return Ok(users);
+            
         }
 
         [HttpGet]
@@ -24,32 +30,34 @@ namespace RitualServer.Controllers
         public async Task<ActionResult<IEnumerable<UserWithRole>>> GetUsersWithRoles()
         {
             var usersWithRoles = await _ritualbdContext.Users
-         .Include(user => user.UserNavigation)
-         .Select(user => new UserWithRole
-         {
-             UserId = user.UserId,
-             Login = user.Login,
-             Password = user.Password,
-             Name = user.FirstName+" "+user.LastName,
-             
-             Email = user.Email,
-             Phone = user.Phone,
-             Address = user.Adress,
-             Image=user.Image,
-             Role = user.UserNavigation.Role1 
-         })
-         .ToListAsync();
-
+                .Join(_ritualbdContext.Roles,
+                    u => u.RoleId,
+                    c => c.RolesId,
+                    (u, c) => new
+                    {
+                        UserId = u.UserId,
+                        Login = u.Login,
+                        Password=u.Password,
+                        Name=u.FirstName+ " "+u.LastName,
+                        Email=u.Email,
+                        Phone=u.Phone,
+                        Addres=u.Adress,
+                        Role=c.Role1,
+                        Image=u.Image
+                    })
+                .ToListAsync();
+            
             return Ok(usersWithRoles);
         }
         
         [HttpGet("{id}")]
         public async Task<ActionResult<IEnumerable<User>>> Get(int id)
         {
-            User bluda = await _ritualbdContext.Users.FirstOrDefaultAsync(x => x.UserId == id);
-            if (bluda == null)
+            //User bluda = await _ritualbdContext.Users.FirstOrDefaultAsync(x => x.UserId == id);
+            User user=await _ritualbdContext.Users.FirstOrDefaultAsync(x=>x.UserId==id);
+            if (user == null)
                 return NotFound();
-            return new ObjectResult(bluda);
+            return new ObjectResult(user);
         }
 
         [HttpPost]
@@ -75,7 +83,7 @@ namespace RitualServer.Controllers
             {
                 return NotFound();
             }
-            _ritualbdContext.Update(user);
+            _ritualbdContext.Users.Update(user);
             await _ritualbdContext.SaveChangesAsync();
             return Ok(user);
         }

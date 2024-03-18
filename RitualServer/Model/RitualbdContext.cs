@@ -78,7 +78,7 @@ public partial class RitualbdContext : DbContext
     public virtual DbSet<WareHouse> WareHouses { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+
         => optionsBuilder.UseSqlServer("Server=DESKTOP-N4N6HD1; Database=Ritualbd; Trusted_Connection=True;TrustServerCertificate=True;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -432,10 +432,16 @@ public partial class RitualbdContext : DbContext
             entity.Property(e => e.UserId).ValueGeneratedOnAdd();
             entity.Property(e => e.RoleId).HasColumnName("RoleID");
 
-            entity.HasOne(d => d.UserNavigation).WithOne(p => p.User)
-                .HasForeignKey<User>(d => d.UserId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Users_Roles");
+            //entity.HasOne(d => d.UserNavigation).WithMany(p => p.Users)
+            //    .HasForeignKey(d => d.RoleId)
+            //    .HasConstraintName("FK_Users_Roles");
+            entity.HasOne(d => d.Roles).WithOne(p => p.Users)
+               .HasForeignKey<User>(d => d.RoleId)
+               .OnDelete(DeleteBehavior.ClientSetNull)
+               .HasConstraintName("FK_Users_Roles");
+            //entity.HasOne(d => d.Roles).WithMany(p => p.Users)
+            //   .HasForeignKey(d => d.RoleId)
+            //   .HasConstraintName("FK_Users_Roles"); 
         });
 
         modelBuilder.Entity<UsersParticipant>(entity =>

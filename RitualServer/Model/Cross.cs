@@ -11,7 +11,7 @@ public partial class Cross
 
     public int? MaterialId { get; set; }
 
-    public string? Image { get; set; }
+    public byte[]? Image { get; set; }
 
     public int? ProductId { get; set; }
 

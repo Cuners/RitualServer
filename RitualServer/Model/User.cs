@@ -35,7 +35,7 @@ public partial class User
 
     public virtual ICollection<Participant> Participants { get; set; } = new List<Participant>();
 
-    public virtual Role UserNavigation { get; set; } = null!;
+    public virtual Role? Roles { get; set; }
 
     public virtual ICollection<UsersParticipant> UsersParticipants { get; set; } = new List<UsersParticipant>();
 }

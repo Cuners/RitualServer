@@ -9,5 +9,7 @@ public partial class Role
 
     public string? Role1 { get; set; }
 
-    public virtual User? User { get; set; }
+    public virtual User? Users { get; set; }
+
+
 }

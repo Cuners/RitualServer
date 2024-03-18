@@ -11,7 +11,7 @@ public partial class Shipment
 
     public DateTime? ShipmentDate { get; set; }
 
-    public int? Address { get; set; }
+    public string? Address { get; set; }
 
     public virtual Order? Order { get; set; }
 }
