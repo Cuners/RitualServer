@@ -6,67 +6,67 @@ namespace RitualServer.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CrossController : Controller
+    public class StatusOrderController : Controller
     {
         private RitualbdContext? _ritualbdContext;
-        public CrossController(RitualbdContext ritualbdContext)
+        public StatusOrderController(RitualbdContext ritualbdContext)
         {
             _ritualbdContext = ritualbdContext;
         }
 
         [HttpGet]
-        [Route("/getCrosses")]
-        public async Task<ActionResult<IEnumerable<Cross>>> Get()
+        [Route("/getStatusOrders")]
+        public async Task<ActionResult<IEnumerable<StatusOrder>>> Get()
         {
-            return await _ritualbdContext.Crosses.Include(x => x.Material).Include(x => x.Color).Include(x => x.Product).ToListAsync();
+            return await _ritualbdContext.StatusOrders.ToListAsync();
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<IEnumerable<Cross>>> Get(int id)
+        public async Task<ActionResult<IEnumerable<StatusOrder>>> Get(int id)
         {
-            Cross monument = await _ritualbdContext.Crosses.Include(x => x.Material).Include(x => x.Color).Include(x => x.Product).FirstOrDefaultAsync(x => x.CrossId == id);
+            StatusOrder monument = await _ritualbdContext.StatusOrders.FirstOrDefaultAsync(x => x.StatusOrderId == id);
             if (monument == null)
                 return NotFound();
             return new ObjectResult(monument);
         }
 
         [HttpPost]
-        public async Task<ActionResult<Cross>> Post(Cross monument)
+        public async Task<ActionResult<StatusOrder>> Post(StatusOrder monument)
         {
             if (monument == null)
             {
                 return BadRequest();
             }
-            _ritualbdContext.Crosses.Add(monument);
+            _ritualbdContext.StatusOrders.Add(monument);
             await _ritualbdContext.SaveChangesAsync();
             return Ok(monument);
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<Cross>> Put(Cross monument)
+        public async Task<ActionResult<StatusOrder>> Put(StatusOrder monument)
         {
             if (monument == null)
             {
                 return BadRequest();
             }
-            if (!_ritualbdContext.Crosses.Any(x => x.CrossId == monument.CrossId))
+            if (!_ritualbdContext.StatusOrders.Any(x => x.StatusOrderId == monument.StatusOrderId))
             {
                 return NotFound();
             }
-            _ritualbdContext.Crosses.Update(monument);
+            _ritualbdContext.StatusOrders.Update(monument);
             await _ritualbdContext.SaveChangesAsync();
             return Ok(monument);
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Cross>> Delete(int id)
+        public async Task<ActionResult<StatusOrder>> Delete(int id)
         {
-            Cross monument = _ritualbdContext.Crosses.FirstOrDefault(x => x.CrossId == id);
+            StatusOrder monument = _ritualbdContext.StatusOrders.FirstOrDefault(x => x.StatusOrderId == id);
             if (monument == null)
             {
                 return NotFound();
             }
-            _ritualbdContext.Crosses.Remove(monument);
+            _ritualbdContext.StatusOrders.Remove(monument);
             await _ritualbdContext.SaveChangesAsync();
             return Ok(monument);
         }

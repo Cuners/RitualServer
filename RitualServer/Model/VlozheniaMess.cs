@@ -7,7 +7,7 @@ public partial class VlozheniaMess
 {
     public int VlozheniaMessId { get; set; }
 
-    public string? ThumbUrl { get; set; }
+    public byte[]? ImagePho { get; set; }
 
     public string? FileUrl { get; set; }
 

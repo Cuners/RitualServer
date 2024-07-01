@@ -15,6 +15,8 @@ public partial class Service
 
     public int? CategoryId { get; set; }
 
+    public byte[]? Image { get; set; }
+
     public virtual CategoiresService? Category { get; set; }
 
     public virtual ICollection<OrderService> OrderServices { get; set; } = new List<OrderService>();

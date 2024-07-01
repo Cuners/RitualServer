@@ -13,6 +13,7 @@ public partial class RitualbdContext : DbContext
     public RitualbdContext(DbContextOptions<RitualbdContext> options)
         : base(options)
     {
+        Database.EnsureCreated();
     }
 
     public virtual DbSet<Brand> Brands { get; set; }
@@ -55,11 +56,9 @@ public partial class RitualbdContext : DbContext
 
     public virtual DbSet<Shipment> Shipments { get; set; }
 
-    public virtual DbSet<SizeCoffin> SizeCoffins { get; set; }
-
-    public virtual DbSet<SizesCof> SizesCofs { get; set; }
-
     public virtual DbSet<StatusVehicle> StatusVehicles { get; set; }
+
+    public virtual DbSet<StatusOrder> StatusOrders { get; set; }
 
     public virtual DbSet<Tape> Tapes { get; set; }
 
@@ -69,17 +68,17 @@ public partial class RitualbdContext : DbContext
 
     public virtual DbSet<User> Users { get; set; }
 
-    public virtual DbSet<UsersParticipant> UsersParticipants { get; set; }
+    public virtual DbSet<Client> Clients { get; set; }
+
+    public virtual DbSet<ClientOrder> ClientOrders { get; set; }
+
+    public virtual DbSet<UsersOrder> UsersOrders { get; set; }
 
     public virtual DbSet<Vehicle> Vehicles { get; set; }
 
     public virtual DbSet<VlozheniaMess> VlozheniaMesses { get; set; }
 
     public virtual DbSet<WareHouse> WareHouses { get; set; }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-
-        => optionsBuilder.UseSqlServer("Server=DESKTOP-N4N6HD1; Database=Ritualbd; Trusted_Connection=True;TrustServerCertificate=True;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -93,7 +92,6 @@ public partial class RitualbdContext : DbContext
             entity.HasKey(e => e.CategoriesServicesId);
 
             entity.Property(e => e.CategoriesServicesId).HasColumnName("CategoriesServicesID");
-            entity.Property(e => e.Image).HasColumnName("image");
         });
 
         modelBuilder.Entity<Category>(entity =>
@@ -158,15 +156,18 @@ public partial class RitualbdContext : DbContext
             entity.Property(e => e.DeletedAt)
                 .HasColumnType("datetime")
                 .HasColumnName("Deleted_at");
-            entity.Property(e => e.IsArchived).HasColumnName("Is_Archived");
-            entity.Property(e => e.IsPinned).HasColumnName("Is_Pinned");
+
             entity.Property(e => e.UpdatedAt)
                 .HasColumnType("datetime")
                 .HasColumnName("Updated_at");
-
+            entity.Property(e => e.TypeId).HasColumnName("Type_Conservation");
             entity.HasOne(d => d.Creator).WithMany(p => p.Conservations)
                 .HasForeignKey(d => d.CreatorId)
                 .HasConstraintName("FK_Conservations_Users");
+            entity.HasOne(d => d.Type).WithMany(p => p.Conservations)
+               .HasForeignKey(d => d.TypeId)
+               .HasConstraintName("FK_Conservations_TypeParticipants");
+          
         });
 
         modelBuilder.Entity<Cross>(entity =>
@@ -202,16 +203,11 @@ public partial class RitualbdContext : DbContext
                 .HasColumnName("Created_At");
             entity.Property(e => e.Message1).HasColumnName("Message");
             entity.Property(e => e.RazgovorId).HasColumnName("Razgovor_ID");
-            entity.Property(e => e.ReceiverId).HasColumnName("Receiver_ID");
             entity.Property(e => e.SenderId).HasColumnName("Sender_ID");
 
             entity.HasOne(d => d.Razgovor).WithMany(p => p.Messages)
                 .HasForeignKey(d => d.RazgovorId)
                 .HasConstraintName("FK_Messages_Conservations");
-
-            entity.HasOne(d => d.Receiver).WithMany(p => p.MessageReceivers)
-                .HasForeignKey(d => d.ReceiverId)
-                .HasConstraintName("FK_Messages_Users1");
 
             entity.HasOne(d => d.Sender).WithMany(p => p.MessageSenders)
                 .HasForeignKey(d => d.SenderId)
@@ -247,11 +243,11 @@ public partial class RitualbdContext : DbContext
         {
             entity.Property(e => e.OrderId).HasColumnName("OrderID");
             entity.Property(e => e.OrderDate).HasColumnType("datetime");
-            entity.Property(e => e.UserId).HasColumnName("UserID");
+            entity.Property(e => e.StatusId).HasColumnName("StatusId");
 
-            entity.HasOne(d => d.User).WithMany(p => p.Orders)
-                .HasForeignKey(d => d.UserId)
-                .HasConstraintName("FK_Orders_Users");
+            entity.HasOne(d => d.Status).WithMany(p => p.Orders)
+                .HasForeignKey(d => d.StatusId)
+                .HasConstraintName("FK_Orders_StatusOrder");
         });
 
         modelBuilder.Entity<OrderItem>(entity =>
@@ -277,9 +273,8 @@ public partial class RitualbdContext : DbContext
             entity.Property(e => e.OrderId).HasColumnName("OrderID");
             entity.Property(e => e.ServiceId).HasColumnName("ServiceID");
 
-            entity.HasOne(d => d.OrderServiceNavigation).WithOne(p => p.OrderService)
-                .HasForeignKey<OrderService>(d => d.OrderServiceId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+            entity.HasOne(d => d.Order).WithMany(p => p.OrderService)
+                .HasForeignKey(d => d.OrderServiceId)
                 .HasConstraintName("FK_OrderServices_Orders");
 
             entity.HasOne(d => d.Service).WithMany(p => p.OrderServices)
@@ -291,16 +286,14 @@ public partial class RitualbdContext : DbContext
         {
             entity.Property(e => e.Id).HasColumnName("ID");
             entity.Property(e => e.ConservationId).HasColumnName("Conservation_id");
-            entity.Property(e => e.TypeId).HasColumnName("Type_id");
+            entity.Property(e => e.IsArchived).HasColumnName("Is_Archived");
+            entity.Property(e => e.IsPinned).HasColumnName("Is_Pinned");
+           
             entity.Property(e => e.UsersId).HasColumnName("Users_id");
 
             entity.HasOne(d => d.Conservation).WithMany(p => p.Participants)
                 .HasForeignKey(d => d.ConservationId)
                 .HasConstraintName("FK_Participants_Conservations");
-
-            entity.HasOne(d => d.Type).WithMany(p => p.Participants)
-                .HasForeignKey(d => d.TypeId)
-                .HasConstraintName("FK_Participants_TypeParticipants");
 
             entity.HasOne(d => d.Users).WithMany(p => p.Participants)
                 .HasForeignKey(d => d.UsersId)
@@ -347,37 +340,20 @@ public partial class RitualbdContext : DbContext
                 .HasConstraintName("FK_Shipments_Orders");
         });
 
-        modelBuilder.Entity<SizeCoffin>(entity =>
-        {
-            entity.HasKey(e => e.SizeCoffinsId);
 
-            entity.Property(e => e.SizeCoffinsId).HasColumnName("SizeCoffinsID");
-            entity.Property(e => e.CoffinId).HasColumnName("Coffin_ID");
-            entity.Property(e => e.SizeCofId).HasColumnName("SizeCof_ID");
-
-            entity.HasOne(d => d.Coffin).WithMany(p => p.SizeCoffins)
-                .HasForeignKey(d => d.CoffinId)
-                .HasConstraintName("FK_SizeCoffins_Coffins");
-
-            entity.HasOne(d => d.SizeCof).WithMany(p => p.SizeCoffins)
-                .HasForeignKey(d => d.SizeCofId)
-                .HasConstraintName("FK_SizeCoffins_SizesCof");
-        });
-
-        modelBuilder.Entity<SizesCof>(entity =>
-        {
-            entity.HasKey(e => e.SizeId);
-
-            entity.ToTable("SizesCof");
-
-            entity.Property(e => e.SizeId).HasColumnName("SizeID");
-        });
 
         modelBuilder.Entity<StatusVehicle>(entity =>
         {
             entity.ToTable("StatusVehicle");
 
             entity.Property(e => e.StatusVehicleId).HasColumnName("StatusVehicleID");
+        });
+
+        modelBuilder.Entity<StatusOrder>(entity =>
+        {
+            entity.ToTable("StatusOrder");
+
+            entity.Property(e => e.StatusOrderId).HasColumnName("StatusOrderID");
         });
 
         modelBuilder.Entity<Tape>(entity =>
@@ -432,33 +408,48 @@ public partial class RitualbdContext : DbContext
             entity.Property(e => e.UserId).ValueGeneratedOnAdd();
             entity.Property(e => e.RoleId).HasColumnName("RoleID");
 
-            //entity.HasOne(d => d.UserNavigation).WithMany(p => p.Users)
-            //    .HasForeignKey(d => d.RoleId)
-            //    .HasConstraintName("FK_Users_Roles");
-            entity.HasOne(d => d.Roles).WithOne(p => p.Users)
-               .HasForeignKey<User>(d => d.RoleId)
+            entity.HasOne(d => d.Roles).WithMany(p => p.Users)
+               .HasForeignKey(d => d.RoleId)
                .OnDelete(DeleteBehavior.ClientSetNull)
                .HasConstraintName("FK_Users_Roles");
-            //entity.HasOne(d => d.Roles).WithMany(p => p.Users)
-            //   .HasForeignKey(d => d.RoleId)
-            //   .HasConstraintName("FK_Users_Roles"); 
         });
 
-        modelBuilder.Entity<UsersParticipant>(entity =>
+        modelBuilder.Entity <Client>(entity =>
         {
-            entity.ToTable("Users_Participants");
+            entity.Property(e => e.ClientId).HasColumnName("ClientID");
+        });
 
-            entity.Property(e => e.Id).HasColumnName("ID");
-            entity.Property(e => e.ParticipantId).HasColumnName("Participant_ID");
-            entity.Property(e => e.UserId).HasColumnName("User_ID");
+        modelBuilder.Entity<ClientOrder>(entity =>
+        {
+            entity.HasKey(e => e.ClientOrdersID); ;
+           
+            entity.Property(e => e.ClientID).HasColumnName("ClientID");
 
-            entity.HasOne(d => d.Participant).WithMany(p => p.UsersParticipants)
-                .HasForeignKey(d => d.ParticipantId)
-                .HasConstraintName("FK_Users_Participants_Participants");
+            entity.Property(e => e.OrderID).HasColumnName("OrderID");
 
-            entity.HasOne(d => d.User).WithMany(p => p.UsersParticipants)
-                .HasForeignKey(d => d.UserId)
-                .HasConstraintName("FK_Users_Participants_Users");
+            entity.HasOne(d => d.Clients).WithMany(p => p.ClientOrders)
+                .HasForeignKey(d => d.ClientID)
+                .HasConstraintName("FK_ClientOrders_Client");
+
+            entity.HasOne(d => d.Orders).WithMany(p => p.ClientOrders)
+                .HasForeignKey(d => d.OrderID)
+                .HasConstraintName("FK_ClientOrders_Orders");
+        });
+
+        modelBuilder.Entity<UsersOrder>(entity =>
+        {
+            entity.HasKey(e => e.UsersOrderID);
+            entity.Property(e => e.UserID).HasColumnName("UserID");
+
+            entity.Property(e => e.OrderID).HasColumnName("OrderID");
+
+            entity.HasOne(d => d.Users).WithMany(p => p.UsersOrders)
+                .HasForeignKey(d => d.UserID)
+                .HasConstraintName("FK_UsersOrders_Users");
+
+            entity.HasOne(d => d.Orders).WithMany(p => p.UsersOrders)
+                .HasForeignKey(d => d.OrderID)
+                .HasConstraintName("FK_UsersOrders_Orders");
         });
 
         modelBuilder.Entity<Vehicle>(entity =>
@@ -495,7 +486,6 @@ public partial class RitualbdContext : DbContext
             entity.Property(e => e.VlozheniaMessId).HasColumnName("VlozheniaMessID");
             entity.Property(e => e.FileUrl).HasColumnName("File_Url");
             entity.Property(e => e.MessageId).HasColumnName("Message_id");
-            entity.Property(e => e.ThumbUrl).HasColumnName("Thumb_Url");
 
             entity.HasOne(d => d.Message).WithMany(p => p.VlozheniaMesses)
                 .HasForeignKey(d => d.MessageId)

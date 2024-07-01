@@ -11,7 +11,7 @@ public partial class OrderService
 
     public int? ServiceId { get; set; }
 
-    public virtual Order OrderServiceNavigation { get; set; } = null!;
+    public virtual Order? Order { get; set; }
 
     public virtual Service? Service { get; set; }
 }

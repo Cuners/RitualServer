@@ -9,7 +9,5 @@ public partial class CategoiresService
 
     public string? Name { get; set; }
 
-    public byte[]? Image { get; set; }
-
     public virtual ICollection<Service> Services { get; set; } = new List<Service>();
 }

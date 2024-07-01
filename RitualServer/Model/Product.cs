@@ -9,11 +9,11 @@ public partial class Product
 
     public string? Name { get; set; }
 
-    public string? Price { get; set; }
+    public double Price { get; set; }
 
     public string? Opisanie { get; set; }
 
-    public int? CategoryId { get; set; }
+    public int CategoryId { get; set; }
 
     public virtual Category? Category { get; set; }
 

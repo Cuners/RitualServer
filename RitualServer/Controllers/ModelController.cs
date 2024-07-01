@@ -1,72 +1,73 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using RitualServer.Model;
 
 namespace RitualServer.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CrossController : Controller
+    public class ModelController : Controller
     {
         private RitualbdContext? _ritualbdContext;
-        public CrossController(RitualbdContext ritualbdContext)
+        public ModelController(RitualbdContext ritualbdContext)
         {
             _ritualbdContext = ritualbdContext;
         }
 
         [HttpGet]
-        [Route("/getCrosses")]
-        public async Task<ActionResult<IEnumerable<Cross>>> Get()
+        [Route("/getModels")]
+        public async Task<ActionResult<IEnumerable<RitualServer.Model.Model>>> Get()
         {
-            return await _ritualbdContext.Crosses.Include(x => x.Material).Include(x => x.Color).Include(x => x.Product).ToListAsync();
+            return await _ritualbdContext.Models.ToListAsync();
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<IEnumerable<Cross>>> Get(int id)
+        public async Task<ActionResult<IEnumerable<RitualServer.Model.Model>>> Get(int id)
         {
-            Cross monument = await _ritualbdContext.Crosses.Include(x => x.Material).Include(x => x.Color).Include(x => x.Product).FirstOrDefaultAsync(x => x.CrossId == id);
+            RitualServer.Model.Model monument = await _ritualbdContext.Models.FirstOrDefaultAsync(x => x.ModelId == id);
             if (monument == null)
                 return NotFound();
             return new ObjectResult(monument);
         }
 
         [HttpPost]
-        public async Task<ActionResult<Cross>> Post(Cross monument)
+        public async Task<ActionResult<RitualServer.Model.Model>> Post(RitualServer.Model.Model monument)
         {
             if (monument == null)
             {
                 return BadRequest();
             }
-            _ritualbdContext.Crosses.Add(monument);
+            _ritualbdContext.Models.Add(monument);
             await _ritualbdContext.SaveChangesAsync();
             return Ok(monument);
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<Cross>> Put(Cross monument)
+        public async Task<ActionResult<RitualServer.Model.Model>> Put(RitualServer.Model.Model monument)
         {
             if (monument == null)
             {
                 return BadRequest();
             }
-            if (!_ritualbdContext.Crosses.Any(x => x.CrossId == monument.CrossId))
+            if (!_ritualbdContext.Models.Any(x => x.ModelId == monument.ModelId))
             {
                 return NotFound();
             }
-            _ritualbdContext.Crosses.Update(monument);
+            _ritualbdContext.Models.Update(monument);
             await _ritualbdContext.SaveChangesAsync();
             return Ok(monument);
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Cross>> Delete(int id)
+        public async Task<ActionResult<RitualServer.Model.Model>> Delete(int id)
         {
-            Cross monument = _ritualbdContext.Crosses.FirstOrDefault(x => x.CrossId == id);
+            RitualServer.Model.Model monument = _ritualbdContext.Models.FirstOrDefault(x => x.ModelId == id);
             if (monument == null)
             {
                 return NotFound();
             }
-            _ritualbdContext.Crosses.Remove(monument);
+            _ritualbdContext.Models.Remove(monument);
             await _ritualbdContext.SaveChangesAsync();
             return Ok(monument);
         }

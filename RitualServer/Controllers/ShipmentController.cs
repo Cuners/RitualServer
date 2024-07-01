@@ -22,7 +22,7 @@ namespace RitualServer.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<IEnumerable<OrderService>>> Get(int id)
+        public async Task<ActionResult<IEnumerable<Shipment>>> Get(int id)
         {
             Shipment monument = await _ritualbdContext.Shipments.FirstOrDefaultAsync(x => x.ShipmentId == id);
             if (monument == null)

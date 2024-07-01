@@ -15,6 +15,8 @@ public partial class User
 
     public string? LastName { get; set; }
 
+    public string? SurName { get; set; }
+
     public string? Email { get; set; }
 
     public string? Phone { get; set; }
@@ -27,15 +29,12 @@ public partial class User
 
     public virtual ICollection<Conservation> Conservations { get; set; } = new List<Conservation>();
 
-    public virtual ICollection<Message> MessageReceivers { get; set; } = new List<Message>();
+    public virtual ICollection<UsersOrder> UsersOrders { get; set; } = new List<UsersOrder>();
 
     public virtual ICollection<Message> MessageSenders { get; set; } = new List<Message>();
-
-    public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
 
     public virtual ICollection<Participant> Participants { get; set; } = new List<Participant>();
 
     public virtual Role? Roles { get; set; }
 
-    public virtual ICollection<UsersParticipant> UsersParticipants { get; set; } = new List<UsersParticipant>();
 }

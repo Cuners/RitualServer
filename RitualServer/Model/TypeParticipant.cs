@@ -9,5 +9,5 @@ public partial class TypeParticipant
 
     public string? Type { get; set; }
 
-    public virtual ICollection<Participant> Participants { get; set; } = new List<Participant>();
+    public virtual ICollection<Conservation> Conservations { get; set; } = new List<Conservation>();
 }

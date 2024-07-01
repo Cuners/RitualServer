@@ -15,11 +15,8 @@ public partial class Message
 
     public int? SenderId { get; set; }
 
-    public int? ReceiverId { get; set; }
 
     public virtual Conservation? Razgovor { get; set; }
-
-    public virtual User? Receiver { get; set; }
 
     public virtual User? Sender { get; set; }
 

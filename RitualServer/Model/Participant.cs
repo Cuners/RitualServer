@@ -10,14 +10,12 @@ public partial class Participant
     public int? UsersId { get; set; }
 
     public int? ConservationId { get; set; }
+    public bool? IsPinned { get; set; }
 
-    public int? TypeId { get; set; }
+    public bool? IsArchived { get; set; }
 
     public virtual Conservation? Conservation { get; set; }
 
-    public virtual TypeParticipant? Type { get; set; }
-
     public virtual User? Users { get; set; }
 
-    public virtual ICollection<UsersParticipant> UsersParticipants { get; set; } = new List<UsersParticipant>();
 }

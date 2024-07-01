@@ -49,7 +49,7 @@ namespace RitualServer.Controllers
             {
                 return BadRequest();
             }
-            if (!_ritualbdContext.Roles.Any(x => x.RolesId == product.ProductId))
+            if (!_ritualbdContext.Products.Any(x => x.ProductId == product.ProductId))
             {
                 return NotFound();
             }

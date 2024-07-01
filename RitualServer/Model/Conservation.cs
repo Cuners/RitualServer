@@ -17,13 +17,12 @@ public partial class Conservation
 
     public int? CreatorId { get; set; }
 
-    public bool? IsPinned { get; set; }
-
-    public bool? IsArchived { get; set; }
-
+    public int? TypeId { get; set; }
     public virtual User? Creator { get; set; }
+    public virtual TypeParticipant? Type { get; set; }
 
     public virtual ICollection<Message> Messages { get; set; } = new List<Message>();
+
 
     public virtual ICollection<Participant> Participants { get; set; } = new List<Participant>();
 }

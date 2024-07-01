@@ -33,7 +33,7 @@ namespace RitualServer.Controllers
         [HttpPost]
         public async Task<ActionResult<Material>> Post(Material monument)
         {
-            if (monument == null)
+            if (monument == null || _ritualbdContext.Materials.Any(x => x.Name == monument.Name))
             {
                 return BadRequest();
             }
@@ -45,7 +45,7 @@ namespace RitualServer.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<Material>> Put(Material monument)
         {
-            if (monument == null)
+            if (monument == null || _ritualbdContext.Materials.Any(x => x.Name == monument.Name))
             {
                 return BadRequest();
             }

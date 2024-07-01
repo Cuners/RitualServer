@@ -18,7 +18,7 @@ namespace RitualServer.Controllers
         [Route("/getTapes")]
         public async Task<ActionResult<IEnumerable<Tape>>> Get()
         {
-            return await _ritualbdContext.Tapes.ToListAsync();
+            return await _ritualbdContext.Tapes.Include(x => x.Material).Include(x => x.Color).Include(x => x.Product).ToListAsync();
         }
 
         [HttpGet("{id}")]

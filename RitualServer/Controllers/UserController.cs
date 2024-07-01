@@ -20,9 +20,8 @@ namespace RitualServer.Controllers
         public async Task<ActionResult<IEnumerable<User>>> Get()
         {
            // var abc= await _ritualbdContext.Users.Include(u => u.Roles).ToListAsync();
-           var users=await _ritualbdContext.Users.Include(u=>u.Roles).ToListAsync();
+            var users=await _ritualbdContext.Users.Include(u=>u.Roles).ToListAsync();
             return Ok(users);
-            
         }
 
         [HttpGet]
@@ -38,7 +37,7 @@ namespace RitualServer.Controllers
                         UserId = u.UserId,
                         Login = u.Login,
                         Password=u.Password,
-                        Name=u.FirstName+ " "+u.LastName,
+                        Name=u.FirstName+ " "+u.LastName + " " + u.SurName,
                         Email=u.Email,
                         Phone=u.Phone,
                         Addres=u.Adress,

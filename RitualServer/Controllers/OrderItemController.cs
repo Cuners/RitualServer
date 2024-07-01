@@ -29,7 +29,14 @@ namespace RitualServer.Controllers
                 return NotFound();
             return new ObjectResult(monument);
         }
-
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<OrderItem>>> GetOrder(int idorder)
+        {
+            OrderItem monument = await _ritualbdContext.OrderItems.Include(x=>x.Product).Include(x=>x.Order).FirstOrDefaultAsync(x => x.OrderId == idorder);
+            if (monument == null)
+                return NotFound();
+            return new ObjectResult(monument);
+        }
         [HttpPost]
         public async Task<ActionResult<OrderItem>> Post(OrderItem monument)
         {

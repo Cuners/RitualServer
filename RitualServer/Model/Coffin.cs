@@ -11,6 +11,12 @@ public partial class Coffin
 
     public int? MaterialId { get; set; }
 
+    public double? Width { get; set; }
+
+    public double? Length { get; set; }
+
+    public double? Height { get; set; }
+
     public int? ProductId { get; set; }
 
     public byte[]? Image { get; set; }
@@ -21,5 +27,5 @@ public partial class Coffin
 
     public virtual Product? Product { get; set; }
 
-    public virtual ICollection<SizeCoffin> SizeCoffins { get; set; } = new List<SizeCoffin>();
+   
 }
